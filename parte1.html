@@ -1,25 +1,121 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parte 1 - CodeRunn</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Parte 1 - Quiz</title>
+<style>
+    body {
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        text-align: center;
+    }
+    .card {
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: auto;
+    }
+    button {
+        background: #880000;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        margin: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 80%;
+        font-size: 16px;
+    }
+    button:hover {
+        background: #aa0000;
+    }
+</style>
 </head>
-
 <body>
 
-    <div class="container">
-        <h1>Parte 1</h1>
+<h1>Parte 1 – Questões</h1>
 
-        <div id="question-box">
-            <p id="question-text">Carregando pergunta...</p>
+<div class="card">
+    <p id="pergunta">Carregando...</p>
+    <div id="opcoes"></div>
+</div>
 
-            <div id="answers"></div>
-        </div>
-    </div>
+<script>
+// --------------------- QUESTÕES PARTE 1 ---------------------- //
+const perguntas = [
+    { p: "Qual palavra-chave permite reatribuição de valor?", op: ["const", "let", "function", "return"], c: 1 },
+    { p: "Qual palavra-chave cria uma variável imutável?", op: ["var", "let", "const", "static"], c: 2 },
+    { p: "Qual laço repete até uma condição ser falsa?", op: ["for", "if", "return", "switch"], c: 0 },
+    { p: "Qual método imprime no console?", op: ["log.console()", "console.log()", "print()", "show()"], c: 1 },
+    { p: "Qual tipo representa números?", op: ["number", "numeric", "int", "double"], c: 0 },
+    { p: "Qual símbolo compara valor e tipo?", op: ["==", "=", "===", "<>"], c: 2 },
+    { p: "Como declarar função?", op: ["func nome()", "function nome()", "def nome()", "fn nome()"], c: 1 },
+    { p: "Qual laço garante ao menos uma execução?", op: ["for", "while", "do...while", "loop"], c: 2 },
+    { p: "Qual estrutura armazena múltiplos valores?", op: ["Array", "Number", "Let", "String"], c: 0 },
+    { p: "Qual método remove o último item do array?", op: ["pop()", "shift()", "remove()", "delete"], c: 0 },
+    { p: "O que var permite que let não permite?", op: ["Redeclaração", "Constante", "Mutação", "Escopo global"], c: 0 },
+    { p: "Qual retorna o tamanho do array?", op: ["size()", "count()", "length", ".len"], c: 2 },
+    { p: "Como converter string para número?", op: ["toNumber()", "Number()", "string()", "parseString()"], c: 1 },
+    { p: "Qual operador lógico representa OU?", op: ["&&", "||", "!", "??"], c: 1 },
+    { p: "Qual método adiciona item ao final?", op: ["push()", "append()", "add()", "insert()"], c: 0 },
 
-    <script src="parte1.js"></script>
+    // 20 novas
+    { p: "Qual método transforma texto em MAIÚSCULAS?", op: ["upper()", "toUpperCase()", "caps()", "uppercase()"], c: 1 },
+    { p: "Qual tipo representa valores verdadeiros ou falsos?", op: ["number", "boolean", "string", "logic"], c: 1 },
+    { p: "Qual estrutura escolhe casos específicos?", op: ["switch", "for", "throw", "loop"], c: 0 },
+    { p: "Qual operador soma valores?", op: ["+", "-", "*", "%"], c: 0 },
+    { p: "Qual método remove o primeiro item do array?", op: ["pop()", "shift()", "removeFirst()", "splice()"], c: 1 },
+    { p: "Como criar uma arrow function?", op: ["func => {}", "() => {}", "arrow {}", "=> function"], c: 1 },
+    { p: "Qual símbolo representa AND lógico?", op: ["||", "&&", "!", "<>"], c: 1 },
+    { p: "Qual método converte array para string?", op: ["join()", "toText()", "convert()", "stringify()"], c: 0 },
+    { p: "Const permite:", op: ["Alterar valor", "Redefinir variável", "Guardar valores fixos", "Criar loops"], c: 2 },
+    { p: "Qual método seleciona parte da string?", op: ["slice()", "cut()", "select()", "sub()"], c: 0 },
+    { p: "Qual verifica quantos itens o array tem?", op: ["items()", "size()", "length", "count()"], c: 2 },
+    { p: "Qual método adiciona item no início?", op: ["unshift()", "push()", "shift()", "prepend()"], c: 0 },
+    { p: "Qual tipo representa texto?", op: ["string", "char", "text", "letters"], c: 0 },
+    { p: "Qual método repete uma string várias vezes?", op: ["repeat()", "loop()", "times()", "multiply()"], c: 0 },
+    { p: "Qual método encontra índice de texto?", op: ["findIndex()", "indexOf()", "locate()", "pos()"], c: 1 },
+    { p: "Qual operador incrementa valor?", op: ["+", "*", "++", "--"], c: 2 },
+    { p: "Qual estrutura tenta executar código e trata erros?", op: ["try/catch", "if/else", "switch", "loop"], c: 0 },
+    { p: "Qual operador verifica desigualdade estrita?", op: ["!=", "===", "!==", "<>"], c: 2 },
+    { p: "JSON significa:", op: ["Java Standard Object Notation", "JavaScript Object Notation", "Java String Object Name", "JavaScript Only Names"], c: 1 },
+    { p: "Qual método converte JSON para objeto?", op: ["JSON.parse()", "JSON.toObject()", "parseJSON()", "objectify()"], c: 0 }
+];
+
+// ------------------------- LÓGICA --------------------------- //
+
+let perguntasRestantes = [...perguntas];
+
+function mostrarPergunta() {
+    if (perguntasRestantes.length === 0) {
+        document.getElementById("pergunta").textContent = "Fim da Parte 1.";
+        document.getElementById("opcoes").innerHTML = "";
+        return;
+    }
+
+    let i = Math.floor(Math.random() * perguntasRestantes.length);
+    let atual = perguntasRestantes[i];
+
+    document.getElementById("pergunta").textContent = atual.p;
+
+    let html = "";
+    atual.op.forEach((opcao, idx) => {
+        html += `<button onclick="responder(${i}, ${idx})">${opcao}</button>`;
+    });
+
+    document.getElementById("opcoes").innerHTML = html;
+}
+
+function responder(iPergunta, resposta) {
+    perguntasRestantes.splice(iPergunta, 1);
+    mostrarPergunta();
+}
+
+mostrarPergunta();
+</script>
 
 </body>
 </html>
