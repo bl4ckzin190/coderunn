@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Parte 1 — Tabuleiro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <a href="index.html" class="muted">← Voltar</a>
+      <h1 class="brand">Tabuleiro — Parte 1</h1>
+    </header>
+
+    <section class="card q-card" id="game-area">
+      <div id="pane-board" style="margin-bottom:12px"></div>
+
+      <div id="qbox">
+        <div class="question" id="qtxt"></div>
+        <div class="choices" id="choices"></div>
+        <div id="toast" class="toast" style="display:none"></div>
+      </div>
+
+      <div style="margin-top:12px;text-align:center">
+        <button id="nextBtn" class="btn small" style="display:none">Próxima</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+/* ====== CONFIG ====== */
+const API_URL = ""; // se tiver API pública, coloque aqui; senão deixe vazio para usar localStorage fallback.
+
+/* ====== Perguntas (20) ====== */
+const questions = [
+  {q:'Encontrou um bug que exibe "NaN" — o que é mais provável?', a:['Erro de tipagem','Função assíncrona','CSS faltando','Imagem grande'], correct:0},
+  {q:'Qual palavra-chave evita reatribuição de variável?', a:['var','let','const','def'], correct:2},
+  {q:'O que faz `===` em JS?', a:['Comparação com conversão','Comparação estrita','Atribuição','Operador ternário'], correct:1},
+  {q:'Qual método transforma string em número?', a:['Number()','toString()','parseCss()','JSON.parse()'], correct:0},
+  {q:'Qual evento dispara quando um elemento é clicado?', a:['onhover','onclick','onchange','onsubmit'], correct:1},
+  {q:'Como declarar função anônima?', a:['function(){}','() => {}','def fn()','lambda:'], correct:1},
+  {q:'Qual estrutura serve para repetir enquanto condição?', a:['for','while','switch','if'], correct:1},
+  {q:'O que `DOM` representa?', a:['Data Object Model','Document Object Model','Display Object Model','Data Only Model'], correct:1},
+  {q:'Qual forma cria array?', a:['{}','[]','()','<>'], correct:1},
+  {q:'Como acessar primeiro elemento do array arr?', a:['arr.first','arr(0)','arr[0]','arr->0'], correct:2},
+  {q:'Qual operador lógico É OU?', a:['&&','||','!','?'], correct:1},
+  {q:'Como converter JSON em objeto?', a:['JSON.toObj()','JSON.parse()','parse.JSON()','eval()'], correct:1},
+  {q:'Qual escopo tem `var`?', a:['bloco','global/função','módulo','arquivo'], correct:1},
+  {q:'Qual método adiciona item ao final do array?', a:['push','pop','shift','unshift'], correct:0},
+  {q:'Qual retorna índice do elemento?', a:['indexOf','find','search','where'], correct:0},
+  {q:'Qual Promise.resolve faz?', a:['cria promise resolvida','cancela promise','espera 1s','faz fetch'], correct:0},
+  {q:'Qual evento impede envio de formulário?', a:['e.preventDefault()','e.stopPropagation()','e.block()','return false'], correct:0},
+  {q:'O que template literals usam?', a:['\"\"','``','<>','()'], correct:1},
+  {q:'Qual é typeof []?', a:['array','object','list','null'], correct:1},
+  {q:'Qual palavra cria classe?', a:['struct','class','object','new'], correct:1}
+];
+
+let idx = 0;
+let pos = 0;
+
+const qtxt = document.getElementById('qtxt');
+const choicesEl = document.getElementById('choices');
+const toast = document.getElementById('toast');
+const nextBtn = document.getElementById('nextBtn');
+const paneBoard = document.getElementById('pane-board');
+
+function buildBoard(){
+  paneBoard.innerHTML = '';
+  const row = document.createElement('div');
+  row.style.display='flex'; row.style.gap='8px'; row.style.flexWrap='wrap';
+  for(let i=0;i<20;i++){
+    const s = document.createElement('div');
+    s.textContent = i+1;
+    s.style.minWidth='34px';
+    s.style.height='34px';
+    s.style.display='flex';
+    s.style.alignItems='center';
+    s.style.justifyContent='center';
+    s.style.borderRadius='8px';
+    s.style.background = i===pos ? 'linear-gradient(90deg,var(--accent),#7f1b1b)' : 'rgba(255,255,255,0.02)';
+    s.style.color = i===pos ? '#fff' : 'var(--muted)';
+    row.appendChild(s);
+  }
+  paneBoard.appendChild(row);
+}
+
+function renderQuestion(){
+  const it = questions[idx];
+  qtxt.textContent = `(${idx+1}/${questions.length}) ${it.q}`;
+  choicesEl.innerHTML='';
+  it.a.forEach((opt,i)=>{
+    const b = document.createElement('button');
+    b.className='choice-btn';
+    b.textContent = opt;
+    b.addEventListener('click',()=>select(i,b));
+    choicesEl.appendChild(b);
+  });
+  toast.style.display='none';
+  nextBtn.style.display='none';
+}
+
+function showToast(txt, ok){
+  toast.style.display='block';
+  toast.textContent = txt;
+  toast.className='toast ' + (ok ? 'ok' : 'err');
+  if(!ok) glitchEffect(toast);
+}
+
+function glitchEffect(el){
+  // cria efeito de caracteres corrompidos temporário
+  const orig = el.textContent;
+  let steps = 0;
+  const iv = setInterval(()=>{
+    el.textContent = orig.split('').map(ch=> Math.random()<0.15 ? String.fromCharCode(33+Math.floor(Math.random()*30)) : ch).join('');
+    steps++;
+    if(steps>6){ clearInterval(iv); el.textContent = orig; }
+  },120);
+}
+
+function select(i,btn){
+  const it = questions[idx];
+  // bloquear
+  Array.from(choicesEl.children).forEach(bt=>bt.disabled=true);
+  if(i===it.correct){
+    // avanço
+    const adv = Math.random()<0.2 ? 2 : 1;
+    pos = Math.min(19, pos + adv);
+    buildBoard();
+    btn.style.borderColor = 'rgba(80,180,100,0.9)';
+    showToast('Correto! Você avançou ' + adv + ' casa(s).', true);
+  } else {
+    pos = Math.max(0, pos - 1);
+    buildBoard();
+    btn.style.borderColor = 'rgba(200,80,80,0.9)';
+    showToast('ERRO: sistema corrompido — resposta inválida.', false);
+  }
+  nextBtn.style.display='inline-block';
+}
+
+nextBtn.addEventListener('click', ()=>{
+  idx++;
+  if(idx >= questions.length){
+    qtxt.textContent = 'Fim das situações — parabéns.';
+    choicesEl.innerHTML='';
+    nextBtn.style.display='none';
+    showToast('Você terminou a Parte 1.', true);
+    return;
+  }
+  renderQuestion();
+});
+
+buildBoard();
+renderQuestion();
+  </script>
+</body>
+</html>
