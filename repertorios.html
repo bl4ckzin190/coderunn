@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Repertórios — JS Ouija</title>
+<title>Repertórios — JS Ouija (Decodificação)</title>
 
 <style>
   :root{
-    --bg:#070403;        /* fundo preto profundo */
-    --panel:#2b160f;     /* marrom escuro */
-    --accent:#6b0b0b;    /* bordo */
+    --bg:#070403;
+    --panel:#2b160f;
+    --accent:#6b0b0b;
     --muted:#c9bfb8;
     --glass: rgba(255,255,255,0.03);
     --radius:12px;
@@ -43,10 +43,9 @@
   .encoded{font-family:monospace;background:rgba(0,0,0,0.16);padding:8px;border-radius:8px;margin-top:10px;color:#e6dcd6;overflow-x:auto}
   .progress{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
   .chip{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:.85rem}
-  /* modal final */
-  .modal{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;backdrop-filter:blur(2px);
-  }
+  .input-inline{display:flex;gap:8px;margin-top:10px}
+  input.decode-input{flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;backdrop-filter:blur(2px)}
   .modal .box{background:linear-gradient(180deg,var(--panel),#1b0f0d);padding:18px;border-radius:14px;color:var(--muted);max-width:420px;text-align:center}
   .glitch{display:inline-block;position:relative}
   .glitch::after,.glitch::before{content:attr(data-text);position:absolute;left:0;top:0;mix-blend-mode:screen;opacity:.6}
@@ -58,7 +57,7 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Repertórios — JavaScript</h1>
+      <h1>Repertórios — JS Ouija</h1>
       <a href="index.html" class="muted">← Voltar</a>
     </header>
 
@@ -99,7 +98,15 @@
         <div class="question" id="qText"></div>
         <div class="choices" id="choices"></div>
         <div id="toast" class="toast"></div>
+
         <div class="progress" id="progress"></div>
+
+        <!-- área para tentar decodificar -->
+        <div class="input-inline">
+          <input id="decodeInput" class="decode-input" placeholder="Tente decodificar (escreva a frase original)" />
+          <button id="decodeBtn" class="btn small">Decodificar</button>
+        </div>
+
         <div style="margin-top:10px;text-align:right">
           <button id="nextBtn" class="btn small" style="display:none">Próxima</button>
         </div>
@@ -107,12 +114,12 @@
     </section>
   </div>
 
-  <!-- Modal final (quando todas codificações reveladas) -->
+  <!-- Modal final -->
   <div id="finalModal" class="modal" style="display:none">
     <div class="box">
       <h2 class="glitch" data-text="Parabéns!">Parabéns!</h2>
       <p style="margin-top:8px">Você revelou todas as codificações.</p>
-      <p style="margin-top:6px;font-family:monospace;color:#e6dcd6" id="allDecodedPreview"></p>
+      <pre id="allDecodedPreview" style="margin-top:8px;color:#e6dcd6;font-family:monospace;background:rgba(0,0,0,0.12);padding:10px;border-radius:8px;"></pre>
       <div style="margin-top:12px">
         <button id="goRanking" class="btn">Ir para Ranking</button>
         <button id="closeModal" class="btn outline" style="margin-left:8px">Fechar</button>
@@ -121,10 +128,10 @@
   </div>
 
 <script>
-/* ========= CONFIGURAÇÃO ======== */
+/* ========== CONFIG ========== */
 const PHRASE = "tinky winky os aguarda novamente";
 
-/* ====== codificações definidas ====== */
+/* codificações */
 function caesarEncode(s, shift = 3){
   const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   return s.split('').map(ch=>{
@@ -145,32 +152,21 @@ function toHex(s){
   return arr.join(' ');
 }
 
-/* encoded strings */
 const encodedStrings = [
-  caesarEncode(PHRASE,3),    // Caesar
-  toBase64(PHRASE),          // Base64
-  toHex(PHRASE)              // Hex
+  caesarEncode(PHRASE,3),
+  toBase64(PHRASE),
+  toHex(PHRASE)
 ];
 
-/* decide chunk sizes for reveal (reasonable UX) */
+/* chunk configuration */
 const chunkConfig = [
-  { // caesar: reveal per word
-    split: encodedStrings[0].split(' '), // words
-    joiner: ' '
-  },
-  { // base64: reveal per 6 chars
-    split: (function(s){ const n=6, out=[]; for(let i=0;i<s.length;i+=n) out.push(s.slice(i,i+n)); return out; })(encodedStrings[1]),
-    joiner: ''
-  },
-  { // hex: reveal per byte (space-separated)
-    split: encodedStrings[2].split(' '),
-    joiner: ' '
-  }
+  { split: encodedStrings[0].split(' '), joiner: ' ' }, // Caesar by words
+  { split: (function(s){ const n=6, out=[]; for(let i=0;i<s.length;i+=n) out.push(s.slice(i,i+n)); return out;})(encodedStrings[1]), joiner: '' }, // Base64 per 6 chars
+  { split: encodedStrings[2].split(' '), joiner: ' ' } // Hex bytes
 ];
 
-/* ===== Questões (36) - parei/peguei do seu gabarito */
+/* 36 questões (usadas antes) */
 const questoes = [
-  /* nível médio 1-12 */
   {n:1, q:'Qual será o resultado da expressão: (10 >= 8) && (5 < 3)?', opts:['true','false','undefined','erro de sintaxe'], correct:1},
   {n:2, q:'Saída do código: let nota=7; if(nota>=6){console.log(\"Aprovado\");} console.log(\"Fim\");', opts:['Aprovado','Fim','Aprovado / Fim','Nenhuma saída'], correct:2},
   {n:3, q:'Quantas vezes o console.log será executado? for(let i=0; i <= 5; i++){ console.log(i); }', opts:['4 vezes','5 vezes','6 vezes','7 vezes'], correct:2},
@@ -183,10 +179,8 @@ const questoes = [
   {n:10,q:'Se temperatura=20, saída do if(temperatura>25){Calor}else{Frio}', opts:['Calor','Frio','Calor / Frio','Nenhuma saída'], correct:1},
   {n:11,q:'Quantas vezes "Olá" será impresso? while(cont<=4){...}', opts:['3','4','5','Infinitas'], correct:1},
   {n:12,q:'Qual será valor de y? let x=10; let y = x/2 + 3*2;', opts:['11','16','13','26'], correct:0},
-
-  /* difícil 13-24 */
   {n:13,q:'for i<3; for j<2 -> quantas execuções?', opts:['3','5','6','9'], correct:2},
-  {n:14,q:'Saída com nota=7 faltas=6 (condicionais)', opts:['Aprovado','Reprovado por falta','Reprovado por nota','Nenhuma saída'], correct:1},
+  {n:14,q:'Saída com nota=7 faltas=6 (condicionais)', opts:['Aprovado','Reprovado por falta','Reprovado por nota','Nenhuma'], correct:1},
   {n:15,q:'Último valor impresso de i: i+=3 enquanto i<10', opts:['6','9','10','12'], correct:1},
   {n:16,q:'Qual expressão retorna FALSE? (a=5,b=10,c=15)', opts:['(a<b)&&(b<c)','(a>b)||(c>b)','!(a==5)&&(b==10)','(a<c)||(b>c)'], correct:2},
   {n:17,q:'Saída for decremento i=10;i>5;i-=2', opts:['10,8,6','10,8,6,4','10,9,...,6','10,8'], correct:0},
@@ -197,8 +191,6 @@ const questoes = [
   {n:22,q:'Quantos pares serão impressos de 1 a 10?', opts:['4','5','6','10'], correct:1},
   {n:23,q:'if(!ativo) com ativo=false -> saída?', opts:['Ativo','Inativo','true','false'], correct:1},
   {n:24,q:'Valor final cont decremento i de 5 a 1', opts:['0','4','5','6'], correct:2},
-
-  /* avançado 25-36 */
   {n:25,q:'valor do algoritmo com i<=4 j<=3 soma i*j', opts:['50','60','70','80'], correct:1},
   {n:26,q:'Quantas vezes "X" será impresso (condição i+j>6)?', opts:['6','8','10','12'], correct:2},
   {n:27,q:'Equivalente a !(a>5 && b<10)', opts:['(a<=5)&&(b>=10)','(a<=5)||(b>=10)','(a<5)&&(b>10)','(a>5)||(b<10)'], correct:1},
@@ -213,14 +205,14 @@ const questoes = [
   {n:36,q:'resultado multiplicando ímpares de 1 a 5', opts:['15','105','120','1'], correct:0}
 ];
 
-/* ===== estado do jogo ===== */
-let activeRepo = null;     // 0..2
-let revealedCounts = [0,0,0]; // number of chunks revealed per repo
+/* ========== ESTADO ========== */
+let activeRepo = null;
+let revealedCounts = [0,0,0];
 let score = 0, errors = 0;
 let currentQuestion = null;
 let questionAnswered = false;
 
-/* ===== helpers UI ===== */
+/* ========== UI REFS ========== */
 const repoArea = document.getElementById('repoArea');
 const rTitle = document.getElementById('rTitle');
 const rDesc  = document.getElementById('rDesc');
@@ -234,8 +226,10 @@ const errorsEl = document.getElementById('errors');
 const progressEl = document.getElementById('progress');
 const finalModal = document.getElementById('finalModal');
 const allDecodedPreview = document.getElementById('allDecodedPreview');
+const decodeInput = document.getElementById('decodeInput');
+const decodeBtn = document.getElementById('decodeBtn');
 
-/* inicializa botões de repertório */
+/* init repo buttons */
 document.querySelectorAll('[data-repo]').forEach(b=>{
   b.addEventListener('click', ()=> openRepo(Number(b.dataset.repo)));
 });
@@ -243,26 +237,21 @@ document.querySelectorAll('[data-repo]').forEach(b=>{
 /* abrir repertório */
 function openRepo(id){
   activeRepo = id;
-  revealedCounts[id] = revealedCounts[id] || 0;
-  const titles = ['Repertório A — Caesar (shift 3)','Repertório B — Base64','Repertório C — Hexadecimal'];
-  const descs  = ['Cada acerto revela uma parte (palavras) da codificação Caesar.',
-                  'Cada acerto revela um trecho (6 chars) da codificação Base64.',
-                  'Cada acerto revela bytes (hex) da codificação hexadecimal.'];
-  rTitle.textContent = titles[id];
-  rDesc.textContent = descs[id];
+  rTitle.textContent = ['Repertório A — Caesar (shift 3)','Repertório B — Base64','Repertório C — Hexadecimal'][id];
+  rDesc.textContent = ['Cada acerto revela palavras da codificação Caesar.','Cada acerto revela blocos de Base64.','Cada acerto revela bytes hex da codificação.'][id];
   repoArea.style.display = 'block';
   updateEncodedDisplay();
   renderProgress();
-  nextQuestion(); // já mostra a primeira
+  nextQuestion();
 }
 
-/* escolhe questão aleatória (com repetição permitida) */
+/* pick random question (with repetition allowed) */
 function pickRandomQuestion(){
   const idx = Math.floor(Math.random()*questoes.length);
-  return JSON.parse(JSON.stringify(questoes[idx])); // cópia simples
+  return JSON.parse(JSON.stringify(questoes[idx]));
 }
 
-/* renderiza uma questão */
+/* render */
 function renderQuestion(q){
   currentQuestion = q;
   questionAnswered = false;
@@ -279,128 +268,80 @@ function renderQuestion(q){
   nextBtn.style.display = 'none';
 }
 
-/* seleção de alternativa */
+/* on select */
 function onSelect(i, btn){
   if(questionAnswered) return;
   questionAnswered = true;
-  // bloquear todas
   Array.from(choicesEl.children).forEach(x=>x.disabled=true);
   const correct = currentQuestion.correct;
   if(i === correct){
-    // acerto
     score++;
     scoreEl.textContent = score;
     btn.style.borderColor = 'rgba(80,180,100,0.95)';
-    showToastReveal(true);
     revealNextChunk(activeRepo);
+    showToast(true, 'Correto — trecho revelado');
   } else {
     errors++;
     errorsEl.textContent = errors;
     btn.style.borderColor = 'rgba(200,80,80,0.95)';
-    showToastReveal(false);
-    // pequeno glitch visual na mensagem
+    showToast(false, glitchText('ERRO: segmento corrompido — 0x0F'));
   }
   nextBtn.style.display = 'inline-block';
 }
 
-/* próxima questão */
-nextBtn.addEventListener('click', ()=>{
-  nextQuestion();
-});
+/* next */
+nextBtn.addEventListener('click', ()=> nextQuestion());
 
-/* pega e mostra nova questão (aleatória) */
 function nextQuestion(){
   const q = pickRandomQuestion();
   renderQuestion(q);
 }
 
-/* mostrar toast com popup: se ok mostra trecho revelado, se errado mostra glitch */
-function showToastReveal(ok){
-  toast.style.display = 'block';
-  if(ok){
-    toast.className = 'toast ok';
-    const snippet = getCurrentRevealedSnippet(activeRepo);
-    toast.textContent = 'Correto — trecho revelado: ' + snippet;
-  } else {
-    toast.className = 'toast err';
-    toast.textContent = glitchText('ERRO: segmento corrompido — 0x0F');
-    // e animar texto rapidamente
-    glitchAnimate(toast);
-  }
-}
-
-/* revela o próximo chunk do repo ativo */
+/* reveal chunk */
 function revealNextChunk(repoIndex){
   if(repoIndex === null) return;
   const cfg = chunkConfig[repoIndex];
-  const totalChunks = cfg.split.length;
-  revealedCounts[repoIndex] = Math.min(totalChunks, revealedCounts[repoIndex] + 1);
+  const total = cfg.split.length;
+  revealedCounts[repoIndex] = Math.min(total, (revealedCounts[repoIndex]||0) + 1);
   updateEncodedDisplay();
   renderProgress();
   checkAllRevealed();
 }
 
-/* retorna string parcial já revelada (com ... se faltar) */
-function getCurrentRevealedSnippet(repoIndex){
-  const cfg = chunkConfig[repoIndex];
-  const revealed = revealedCounts[repoIndex] || 0;
-  if(revealed === 0) return '—';
-  const part = cfg.split.slice(0, revealed).join(cfg.joiner);
-  return part + (revealed < cfg.split.length ? ' …' : '');
-}
-
-/* atualiza a área encoded */
+/* update encoded display for active repo */
 function updateEncodedDisplay(){
-  if(activeRepo === null) { encodedEl.textContent = '—'; return; }
-  encodedEl.textContent = getCurrentRevealedSnippet(activeRepo);
+  if(activeRepo === null){ encodedEl.textContent = '—'; return; }
+  const cfg = chunkConfig[activeRepo];
+  const revealed = revealedCounts[activeRepo] || 0;
+  if(revealed === 0) { encodedEl.textContent = '—'; return; }
+  const part = cfg.split.slice(0,revealed).join(cfg.joiner);
+  encodedEl.textContent = part + (revealed < cfg.split.length ? ' …' : '');
 }
 
-/* renderiza progresso visual (chips por repo) */
+/* render progress */
 function renderProgress(){
   progressEl.innerHTML = '';
   for(let i=0;i<3;i++){
     const c = document.createElement('div');
     c.className='chip';
     const total = chunkConfig[i].split.length;
-    c.textContent = `R${i+1}: ${revealedCounts[i]}/${total}`;
+    c.textContent = `R${i+1}: ${revealedCounts[i]||0}/${total}`;
     progressEl.appendChild(c);
   }
 }
 
-/* se todos os chunks de todos repos foram revelados -> final */
-function checkAllRevealed(){
-  let all = true;
-  for(let i=0;i<3;i++){
-    if((revealedCounts[i]||0) < chunkConfig[i].split.length) { all = false; break; }
-  }
-  if(all) showFinalModal();
+/* show toast */
+function showToast(ok, text){
+  toast.style.display = 'block';
+  toast.className = ok ? 'toast ok' : 'toast err';
+  toast.textContent = text;
+  if(!ok) glitchAnimate(toast);
 }
 
-/* exibe modal final */
-function showFinalModal(){
-  allDecodedPreview.textContent = [
-    'Caesar: ' + encodedStrings[0],
-    'Base64: ' + encodedStrings[1],
-    'Hex: ' + encodedStrings[2]
-  ].join('\n');
-  finalModal.style.display = 'flex';
-}
-
-/* fechar modal */
-document.getElementById('closeModal').addEventListener('click', ()=> finalModal.style.display='none');
-document.getElementById('goRanking').addEventListener('click', ()=>{
-  // opcional: salvar pontuação local e redirecionar para ranking.html
-  const list = JSON.parse(localStorage.getItem('jsg_ranking')||'[]');
-  list.push({ groupName: 'LocalPlayer', time: (new Date()).toISOString(), score });
-  localStorage.setItem('jsg_ranking', JSON.stringify(list));
-  window.location.href = 'ranking.html';
-});
-
-/* pequena função para texto glitch */
+/* glitch text helper */
 function glitchText(s){
   return s.split('').map(ch=> Math.random()<0.18 ? String.fromCharCode(33+Math.floor(Math.random()*30)) : ch).join('');
 }
-/* animação de glitch no elemento (texto muda por curtos instantes) */
 function glitchAnimate(el){
   const orig = el.textContent;
   let steps = 0;
@@ -411,37 +352,76 @@ function glitchAnimate(el){
   },110);
 }
 
-/* ===== get current partial snippet (used in toast) */
-function getCurrentRevealedSnippet(repoIndex){
-  return getCurrentRevealedSnippetCached(repoIndex);
-}
-/* avoid name clash: implement actual function above; fix after building */
-function getCurrentRevealedSnippetCached(repoIndex){
-  const cfg = chunkConfig[repoIndex];
-  const revealed = revealedCounts[repoIndex] || 0;
-  if(revealed === 0) return '—';
-  const part = cfg.split.slice(0, revealed).join(cfg.joiner);
-  return part + (revealed < cfg.split.length ? ' …' : '');
+/* check all revealed */
+function checkAllRevealed(){
+  let all = true;
+  for(let i=0;i<3;i++){
+    if((revealedCounts[i]||0) < chunkConfig[i].split.length) { all = false; break; }
+  }
+  if(all) showFinalModal();
 }
 
-/* fix small duplicated function issue: ensure updateEncodedDisplay uses correct getter */
-function overwriteGetCurrent(){
-  window._getRevealed = function(repoIndex){
-    const cfg = chunkConfig[repoIndex];
-    const revealed = revealedCounts[repoIndex] || 0;
-    if(revealed === 0) return '—';
-    const part = cfg.split.slice(0, revealed).join(cfg.joiner);
-    return part + (revealed < cfg.split.length ? ' …' : '');
-  };
+/* final modal */
+function showFinalModal(){
+  allDecodedPreview.textContent = [
+    'Caesar: ' + encodedStrings[0],
+    'Base64: ' + encodedStrings[1],
+    'Hex: ' + encodedStrings[2]
+  ].join('\n');
+  finalModal.style.display = 'flex';
 }
-overwriteGetCurrent();
-/* override one place used earlier */
-function getCurrentRevealedSnippet(repoIndex){ return window._getRevealed(repoIndex); }
+document.getElementById('closeModal').addEventListener('click', ()=> finalModal.style.display='none');
+document.getElementById('goRanking').addEventListener('click', ()=>{
+  const list = JSON.parse(localStorage.getItem('jsg_ranking')||'[]');
+  list.push({ groupName: 'LocalPlayer', time: (new Date()).toISOString(), score });
+  localStorage.setItem('jsg_ranking', JSON.stringify(list));
+  window.location.href = 'ranking.html';
+});
 
-/* inicial render */
+/* ========== Decodificar: validar input ======== */
+decodeBtn.addEventListener('click', handleDecodeAttempt);
+decodeInput.addEventListener('keydown', (e)=> { if(e.key === 'Enter') handleDecodeAttempt(); });
+
+function normalizeAnswer(s){
+  return s.trim().toLowerCase().replace(/\s+/g,' ');
+}
+
+function handleDecodeAttempt(){
+  if(activeRepo === null) {
+    showToast(false, 'Escolha primeiro um repertório.');
+    return;
+  }
+  const attempt = decodeInput.value || '';
+  const norm = normalizeAnswer(attempt);
+  if(!norm){
+    showToast(false, 'Digite uma tentativa antes de enviar.');
+    return;
+  }
+  const target = normalizeAnswer(PHRASE);
+  if(norm === target){
+    // sucesso: completa o repertório atual (marca todos os chunks como revelados)
+    revealedCounts[activeRepo] = chunkConfig[activeRepo].split.length;
+    updateEncodedDisplay();
+    renderProgress();
+    showToast(true, 'Decodificação correta — repertório completo!');
+    // small reward: +1 score if not yet fully revealed
+    score += 1;
+    scoreEl.textContent = score;
+    checkAllRevealed();
+  } else {
+    errors++;
+    errorsEl.textContent = errors;
+    showToast(false, glitchText('DECODE ERROR: entrada inválida.'));
+  }
+  decodeInput.value = '';
+}
+
+/* inicial */
 renderProgress();
 scoreEl.textContent = score;
 errorsEl.textContent = errors;
+
+/* start with nothing visible */
 </script>
 </body>
 </html>
