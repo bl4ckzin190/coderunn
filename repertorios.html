@@ -70,6 +70,9 @@ const repos = [
   {id:1,title:'Repertório B (Base64)',desc:'Base64. Cada acerto revela 3 caracteres.', cipher:encodedList[1]},
   {id:2,title:'Repertório C (Morse)',desc:'Morse. Cada acerto revela 6 sinais.', cipher:encodedList[2]}
 ];
+function makeQs(n){ return Array.from({length:n}).map((_,i)=> ({q:`Pergunta ${i+1}: Qual será o resultado da expressão: (10 >= 8) && (5 < 3)?`, a:['Verdadeoro','Falso','Indefinido','Erro de sintaxe'], correct: Math.floor(Math.random()*4)}) ); }
+const repoQs = [makeQs(15), makeQs(15), makeQs(15)];
+
 function makeQs(n){ return Array.from({length:n}).map((_,i)=> ({q:`Pergunta ${i+1}: escolha a resposta`, a:['Opção A','Opção B','Opção C','Opção D'], correct: Math.floor(Math.random()*4)}) ); }
 const repoQs = [makeQs(15), makeQs(15), makeQs(15)];
 
