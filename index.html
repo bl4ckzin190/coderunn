@@ -1,39 +1,36 @@
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Code Run — Parte 1</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Code Run — Parte 1</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="container">
-<h1>Tabuleiro — Parte 1</h1>
-<p class="subtitle">Responda situações para avançar pelo tabuleiro</p>
+  <main class="container">
+    <h1>Tabuleiro — Parte 1</h1>
+    <p class="subtitle">Responda situações para avançar pelo tabuleiro</p>
 
+    <section id="board-wrap">
+      <div id="board" aria-hidden="true"></div>
+      <div id="player" class="player">●</div>
+    </section>
 
-<section id="board-wrap">
-<div id="board" aria-hidden="true"></div>
-<div id="player" class="player">●</div>
-</section>
+    <section id="question-area">
+      <div id="qbox" class="card">
+        <p id="question-text"></p>
+        <div id="choices"></div>
+        <div class="controls">
+          <button id="next-btn" class="hidden">Próxima</button>
+        </div>
+      </div>
+    </section>
 
+    <nav class="footer">
+      <a href="../part2/index.html">Ir para Parte 2</a>
+      <a href="../final_challenge/index.html">Desafio Final</a>
+    </nav>
+  </main>
 
-<section id="question-area">
-<div id="qbox" class="card">
-<p id="question-text"></p>
-<div id="choices"></div>
-<div class="controls">
-<button id="next-btn" class="hidden">Próxima</button>
-</div>
-</div>
-</section>
-
-
-<nav class="footer">
-<a href="../part2/index.html">Ir para Parte 2</a>
-<a href="../final_challenge/index.html">Desafio Final</a>
-</nav>
-</main>
-
-
-<script src="game.js"></script>
+  <script src="game.js"></script>
 </body>
+</html>
