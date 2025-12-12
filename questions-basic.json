@@ -1,0 +1,113 @@
+[
+  {
+    "question": "O que a palavra-chave 'let' faz em JavaScript?",
+    "options": [
+      "Declara uma variável com escopo de bloco",
+      "Declara uma variável global",
+      "Cria uma função",
+      "Cria um loop"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Qual palavra-chave é usada para declarar uma constante?",
+    "options": ["var", "const", "let", "static"],
+    "answer": 1
+  },
+  {
+    "question": "Qual operador verifica igualdade sem converter o tipo?",
+    "options": ["==", "=", "===", "!="],
+    "answer": 2
+  },
+  {
+    "question": "Qual destes é um tipo primitivo em JavaScript?",
+    "options": ["string", "objeto", "função", "array"],
+    "answer": 0
+  },
+  {
+    "question": "Qual método exibe algo no console?",
+    "options": ["print()", "echo()", "console.log()", "write()"],
+    "answer": 2
+  },
+  {
+    "question": "Como se escreve um comentário de linha única?",
+    "options": ["/* comentário */", "// comentário", "<!-- comentário -->", "# comentário"],
+    "answer": 1
+  },
+  {
+    "question": "Qual símbolo representa um array?",
+    "options": ["{}", "()", "[]", "<>"],
+    "answer": 2
+  },
+  {
+    "question": "O que significa NaN?",
+    "options": ["Número inválido", "Nome da variável", "Novo array numérico", "Nada atribuído"],
+    "answer": 0
+  },
+  {
+    "question": "Qual método converte string em número?",
+    "options": ["parseInt()", "toNumber()", "stringToInt()", "convert()"],
+    "answer": 0
+  },
+  {
+    "question": "Qual laço repete um bloco enquanto a condição é verdadeira?",
+    "options": ["for", "while", "loop", "repeat"],
+    "answer": 1
+  },
+
+  {
+    "question": "Como declarar uma função?",
+    "options": [
+      "function minhaFuncao() {}",
+      "func minhaFuncao {}",
+      "fun minhaFuncao()",
+      "def minhaFuncao {}"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Qual desses NÃO é um tipo primitivo?",
+    "options": ["boolean", "number", "object", "undefined"],
+    "answer": 2
+  },
+  {
+    "question": "O que 'true' representa?",
+    "options": ["Um texto", "Um número", "Um valor lógico", "Um erro"],
+    "answer": 2
+  },
+  {
+    "question": "Qual símbolo representa OR lógico?",
+    "options": ["&&", "||", "!", "??"],
+    "answer": 1
+  },
+  {
+    "question": "Qual comando interrompe um loop?",
+    "options": ["stop", "break", "exit", "halt"],
+    "answer": 1
+  },
+  {
+    "question": "Qual comando pula para a próxima iteração do loop?",
+    "options": ["break", "continue", "skip", "return"],
+    "answer": 1
+  },
+  {
+    "question": "Qual função mostra um alerta na tela?",
+    "options": ["alert()", "show()", "msg()", "popup()"],
+    "answer": 0
+  },
+  {
+    "question": "Qual palavra-chave cria uma variável global?",
+    "options": ["let", "const", "global", "var"],
+    "answer": 3
+  },
+  {
+    "question": "Arrays começam pelo índice…",
+    "options": ["1", "0", "2", "-1"],
+    "answer": 1
+  },
+  {
+    "question": "Qual operador soma dois valores?",
+    "options": ["+", "-", "*", "%"],
+    "answer": 0
+  }
+]
