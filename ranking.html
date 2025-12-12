@@ -1,33 +1,111 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ranking — JS Game</title>
-  <style>
-    body{background:#050303;color:#ddd;font-family:Inter,system-ui;padding:18px}
-    .card{background:#0f0b0d;padding:12px;border-radius:8px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;text-align:left}
-  </style>
+  <title>Ranking — JS Ouija</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="card">
-    <h1>Ranking</h1>
-    <table id="tbl">
-      <thead><tr><th>#</th><th>Nome</th><th>Tempo (s)</th><th>Data</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <a href="part1/index.html">Voltar ao jogo</a>
+  <main class="wrap">
+    <header class="top">
+      <a href="index.html" class="muted">← Voltar</a>
+      <h1 class="brand">Ranking</h1>
+    </header>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <p class="muted">Melhores tempos (local / API)</p>
+        <button id="refresh" class="btn small">Atualizar</button>
+      </div>
+
+      <div id="list" style="margin-top:12px"></div>
+
+      <div style="margin-top:12px" class="muted">
+        <p>Enviar pontuação (simulação)</p>
+        <input id="name" placeholder="Nome do grupo" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">
+        <input id="time" placeholder="Tempo em segundos (ex: 345)" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);margin-top:8px">
+        <div style="margin-top:8px;text-align:right">
+          <button id="send" class="btn">Enviar</button>
+        </div>
+      </div>
+    </section>
   </main>
+
   <script>
-    const tbody = document.querySelector('#tbl tbody');
-    const list = JSON.parse(localStorage.getItem('jsgame_ranking')||'[]');
-    list.forEach((it,i)=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${i+1}</td><td>${it.name}</td><td>${it.time}</td><td>${new Date(it.date).toLocaleString()}</td>`;
-      tbody.appendChild(tr);
-    });
+/* CONFIG */
+const API_URL = ""; // se tiver backend, cole a URL aqui, ex: "https://meu-api.up.railway.app"
+
+/* utils de ranking */
+function readLocal(){
+  try{ return JSON.parse(localStorage.getItem('jsg_ranking')||'[]'); }catch(e){return [];}
+}
+function writeLocal(list){ localStorage.setItem('jsg_ranking', JSON.stringify(list)); }
+
+async function fetchApi(){
+  if(!API_URL) return null;
+  try{
+    const res = await fetch(API_URL + '/ranking');
+    if(!res.ok) throw new Error('no api');
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+async function loadList(){
+  const api = await fetchApi();
+  const container = document.getElementById('list');
+  container.innerHTML = '';
+  let list = api || readLocal();
+  if(!list || !list.length){
+    container.innerHTML = '<div class="muted">Nenhuma pontuação registrada.</div>'; return;
+  }
+  // ordenar por tempo asc
+  list.sort((a,b)=>a.timeInSeconds - b.timeInSeconds);
+  // render
+  list.slice(0,30).forEach((it,i)=>{
+    const el = document.createElement('div');
+    el.className='card';
+    el.style.marginBottom='8px';
+    el.innerHTML = `<strong>#${i+1} ${it.groupName || it.name}</strong><div class="muted">Tempo: ${it.timeInSeconds ?? it.time}</div><div class="muted">Data: ${it.timestamp? new Date(it.timestamp).toLocaleString(): (it.date? new Date(it.date).toLocaleString() : '')}</div>`;
+    container.appendChild(el);
+  });
+}
+
+document.getElementById('refresh').addEventListener('click', loadList);
+
+document.getElementById('send').addEventListener('click', async ()=>{
+  const name = document.getElementById('name').value.trim() || 'Anônimo';
+  const t = Number(document.getElementById('time').value.trim());
+  if(!t || isNaN(t) || t <= 0){ alert('Tempo inválido'); return; }
+
+  const payload = { groupName: name, timeInSeconds: t };
+
+  if(API_URL){
+    try{
+      const res = await fetch(API_URL + '/ranking', {
+        method:'POST',headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('API error');
+      alert('Enviado para API!');
+    }catch(e){
+      // fallback local
+      const local = readLocal();
+      local.push({groupName:name, timeInSeconds:t, timestamp:new Date().toISOString()});
+      writeLocal(local);
+      alert('API indisponível. Pontuação salva localmente.');
+    }
+  } else {
+    const local = readLocal();
+    local.push({groupName:name, timeInSeconds:t, timestamp:new Date().toISOString()});
+    writeLocal(local);
+    alert('Pontuação salva localmente.');
+  }
+  loadList();
+});
+
+// initial
+loadList();
   </script>
 </body>
 </html>
+
