@@ -1,13 +1,13 @@
 :root{
---bg:#0b0503; /* preto profundo */
---panel:#2b160f; /* marrom escuro */
---accent:#6b0b0b; /* vermelho bordo */
---muted:#a89b94;
+  --bg:#0b0503; /* preto profundo */
+  --panel:#2b160f; /* marrom escuro */
+  --accent:#6b0b0b; /* vermelho bordo */
+  --muted:#a89b94;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#160b09);color:var(--muted);-webkit-font-smoothing:antialiased;
+  margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#160b09);color:var(--muted);-webkit-font-smoothing:antialiased;
 }
 .container{max-width:520px;margin:0 auto;padding:18px}
 h1{color:var(--accent);font-size:1.2rem;margin:0 0 6px}
@@ -26,3 +26,4 @@ button.hidden{display:none}
 .footer{display:flex;justify-content:space-between;margin-top:14px}
 .footer a{color:var(--muted);text-decoration:none;font-size:.9rem}
 @media(max-width:420px){.container{padding:12px}#board-wrap{min-height:180px}}
+
