@@ -1,29 +1,78 @@
 :root{
-  --bg:#0b0503; /* preto profundo */
-  --panel:#2b160f; /* marrom escuro */
-  --accent:#6b0b0b; /* vermelho bordo */
-  --muted:#a89b94;
+  --bg:#090604;        /* preto profundo */
+  --panel:#2b160f;     /* marrom escuro */
+  --accent:#6b0b0b;    /* bordo */
+  --glass: rgba(255,255,255,0.03);
+  --muted:#c9bfb8;
+  --radius:12px;
+  --gap:14px;
+  --maxw:520px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.6);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#160b09);color:var(--muted);-webkit-font-smoothing:antialiased;
+  margin:0;
+  background: linear-gradient(180deg,var(--bg), #120908);
+  color:var(--muted);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:20px;
+  display:flex;
+  justify-content:center;
 }
-.container{max-width:520px;margin:0 auto;padding:18px}
-h1{color:var(--accent);font-size:1.2rem;margin:0 0 6px}
-.subtitle{margin-top:0;margin-bottom:12px;color:#9e8b86;font-size:.9rem}
-#board-wrap{position:relative;background:repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 60px),var(--panel);border-radius:12px;padding:12px;margin-bottom:12px;min-height:220px}
-#board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px}
-.square{background:rgba(0,0,0,0.25);min-height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem}
-.player{position:absolute;left:12px;top:12px;color:var(--accent);font-weight:700;transform:translate(-6px,-6px)}
-.card{background:rgba(0,0,0,0.35);padding:12px;border-radius:8px}
-#choices{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.choice{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:6px;color:var(--muted);text-align:left}
-.choice:hover{border-color:var(--accent);cursor:pointer}
-.controls{display:flex;justify-content:flex-end;margin-top:10px}
-button{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:8px 10px;border-radius:6px}
-button.hidden{display:none}
-.footer{display:flex;justify-content:space-between;margin-top:14px}
-.footer a{color:var(--muted);text-decoration:none;font-size:.9rem}
-@media(max-width:420px){.container{padding:12px}#board-wrap{min-height:180px}}
+.wrap{
+  width:100%;
+  max-width:var(--maxw);
+}
+.top{margin-bottom:var(--gap)}
+.brand{margin:0;color:var(--accent);font-size:1.4rem}
+.tag{margin:6px 0 0;color:#a38f8a;font-size:.92rem}
 
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:var(--gap);
+}
+.center{text-align:center}
+
+.actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.btn{
+  display:inline-block;
+  text-decoration:none;
+  background:var(--accent);
+  color:#fff;
+  padding:12px 14px;
+  border-radius:10px;
+  font-weight:600;
+  box-shadow: 0 6px 14px rgba(107,11,11,0.18);
+}
+.btn.small{padding:8px 10px;font-size:.95rem}
+.btn.outline{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.05);box-shadow:none}
+
+.foot{font-size:.82rem;text-align:center;margin-top:10px;color:#8f827e}
+
+/* Cards para perguntas */
+.q-card{padding:14px;border-radius:12px;background:linear-gradient(180deg,var(--glass),transparent);}
+
+.question{font-weight:700;color:#e9dcd6;margin-bottom:8px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{
+  background:transparent;border:1px solid rgba(255,255,255,0.05);
+  padding:12px;border-radius:10px;color:var(--muted);text-align:left;font-weight:600;
+}
+.choice-btn:hover{border-color:var(--accent);cursor:pointer}
+.toast{margin-top:10px;padding:10px;border-radius:10px}
+
+/* positive & glitch */
+.toast.ok{background:rgba(80,150,90,0.12);color:#bfe6b7;border:1px solid rgba(80,150,90,0.18)}
+.toast.err{background:linear-gradient(90deg, rgba(180,60,60,0.06), rgba(140,40,40,0.03));color:#ffb7b7;border:1px dashed rgba(200,60,60,0.25);font-family:monospace}
+
+/* responsive tweaks */
+@media(min-width:660px){
+  .actions{flex-direction:row;justify-content:center}
+  .btn{min-width:160px}
+}
