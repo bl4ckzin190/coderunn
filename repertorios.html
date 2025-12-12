@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Repertórios — Parte 2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <a href="index.html" class="muted">← Voltar</a>
+      <h1 class="brand">Repertórios</h1>
+    </header>
+
+    <section class="card">
+      <p class="muted">Escolha um repertório. Cada acerto revela trechos da codificação.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn" data-repo="0">A — Caesar</button>
+        <button class="btn" data-repo="1">B — Base64</button>
+        <button class="btn outline" data-repo="2">C — Morse</button>
+      </div>
+    </section>
+
+    <section id="repoCard" class="card" style="display:none">
+      <h3 id="rtitle"></h3>
+      <p id="rdesc" class="muted"></p>
+
+      <div id="qbox" class="q-card">
+        <div class="question" id="rq"></div>
+        <div class="choices" id="rchoices"></div>
+        <div id="rmsg" class="toast" style="display:none"></div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="card small muted">Codificação parcial: <strong id="encoded">—</strong></div>
+      </div>
+      <div style="margin-top:10px">
+        <input id="attempt" placeholder="Tente decodificar (opcional)" style="width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">
+      </div>
+      <div style="margin-top:10px;text-align:right">
+        <button id="check">Verificar</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+/* CONFIG */
+const API_URL = ""; // colocar URL do backend se tiver (opcional)
+/* dados */
+const original = 'Tinky winky voltara em breve';
+function caesar(s,shift=3){
+  return s.split('').map(c=>{
+    const A='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const idx=A.indexOf(c);
+    if(idx===-1) return c;
+    const base = idx<26?0:26;
+    return A[(idx-base+shift)%26 + base];
+  }).join('');
+}
+function toBase64(s){ try{return btoa(unescape(encodeURIComponent(s)));}catch(e){return btoa(s);} }
+function toMorse(s){
+  const map = {a:'.-',b:'-...',c:'-.-.',d:'-..',e:'.',f:'..-.',g:'--.',h:'....',i:'..',j:'.---',k:'-.-',l:'.-..',m:'--',n:'-.',o:'---',p:'.--.',q:'--.-',r:'.-.',s:'...',t:'-',u:'..-',v:'...-',w:'.--',x:'-..-',y:'-.--',z:'--..',' ':'/'};
+  return s.toLowerCase().split('').map(c=>map[c]||c).join(' ');
+}
+const encodedList = [caesar(original,3), toBase64(original), toMorse(original)];
+const repos = [
+  {id:0,title:'Repertório A (Caesar)',desc:'Shift 3. Cada acerto revela 2 caracteres.', cipher:encodedList[0]},
+  {id:1,title:'Repertório B (Base64)',desc:'Base64. Cada acerto revela 3 caracteres.', cipher:encodedList[1]},
+  {id:2,title:'Repertório C (Morse)',desc:'Morse. Cada acerto revela 6 sinais.', cipher:encodedList[2]}
+];
+function makeQs(n){ return Array.from({length:n}).map((_,i)=> ({q:`Pergunta ${i+1}: escolha a resposta`, a:['Opção A','Opção B','Opção C','Opção D'], correct: Math.floor(Math.random()*4)}) ); }
+const repoQs = [makeQs(15), makeQs(15), makeQs(15)];
+
+let cur=null, idx=0, revealed=0;
+
+const repoCard = document.getElementById('repoCard');
+const rtitle = document.getElementById('rtitle');
+const rdesc = document.getElementById('rdesc');
+const rq = document.getElementById('rq');
+const rchoices = document.getElementById('rchoices');
+const rmsg = document.getElementById('rmsg');
+const encodedEl = document.getElementById('encoded');
+
+document.querySelectorAll('[data-repo]').forEach(b=>{
+  b.addEventListener('click', ()=> openRepo(Number(b.dataset.repo)));
+});
+
+function openRepo(id){
+  cur = id; idx=0; revealed=0;
+  const r = repos[id];
+  rtitle.textContent = r.title;
+  rdesc.textContent = r.desc;
+  encodedEl.textContent = '—';
+  repoCard.style.display='block';
+  renderRepoQ();
+}
+
+function renderRepoQ(){
+  const it = repoQs[cur][idx];
+  rq.textContent = `(${idx+1}/${repoQs[cur].length}) ${it.q}`;
+  rchoices.innerHTML='';
+  it.a.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt;
+    btn.addEventListener('click', ()=> selectRepo(i,btn));
+    rchoices.appendChild(btn);
+  });
+  rmsg.style.display='none';
+}
+
+function glitchTxt(s){
+  return s.split('').map(ch=> Math.random()<0.12? String.fromCharCode(33+Math.floor(Math.random()*30)) : ch).join('');
+}
+
+function selectRepo(i,btn){
+  const it = repoQs[cur][idx];
+  Array.from(rchoices.children).forEach(x=>x.disabled=true);
+  if(i===it.correct){
+    // reveal more
+    const revealStep = cur===0?2: cur===1?3:6;
+    revealed = Math.min(repos[cur].cipher.length, revealed + revealStep);
+    encodedEl.textContent = repos[cur].cipher.slice(0,revealed) + (revealed < repos[cur].cipher.length ? '…' : '');
+    rmsg.className='toast ok'; rmsg.style.display='block'; rmsg.textContent='Acertou — trecho revelado.';
+  } else {
+    rmsg.className='toast err'; rmsg.style.display='block'; rmsg.textContent = glitchTxt('ERRO: segmento corrompido.');
+  }
+  idx++;
+  if(idx >= repoQs[cur].length){
+    setTimeout(()=>{rq.textContent='Fim do repertório.'; rchoices.innerHTML='';},600);
+  } else {
+    setTimeout(renderRepoQ,700);
+  }
+}
+
+// check decode button
+document.getElementById('check').addEventListener('click', ()=>{
+  const val = document.getElementById('attempt').value.trim();
+  if(!val) return;
+  if(val.toLowerCase() === original.toLowerCase()){
+    rmsg.className='toast ok'; rmsg.style.display='block'; rmsg.textContent='Decodificação correta!';
+  } else {
+    rmsg.className='toast err'; rmsg.style.display='block'; rmsg.textContent=glitchTxt('DECODE ERROR: inválido.');
+  }
+});
+  </script>
+</body>
+</html>
