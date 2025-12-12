@@ -1,537 +1,144 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Repertórios — JS Ouija (Níveis & Codificações)</title>
+<meta charset="UTF-8">
+<title>Parte 2 - Quiz</title>
 <style>
-  :root{
-    --bg:#070403; --panel:#2b160f; --accent:#6b0b0b; --muted:#c9bfb8;
-    --glass: rgba(255,255,255,0.03); --radius:12px; --maxw:520px;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;min-height:100vh;background:linear-gradient(180deg,var(--bg),#120908);color:var(--muted);
-    font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;display:flex;justify-content:center;padding:18px;
-  }
-  .wrap{width:100%;max-width:var(--maxw)}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-  h1{margin:0;color:var(--accent);font-size:1.1rem}
-  .card{background:linear-gradient(180deg,var(--glass),transparent);padding:12px;border-radius:var(--radius);box-shadow:0 8px 20px rgba(0,0,0,0.6);margin-bottom:12px}
-  .muted{color:#9d8f8a;font-size:.95rem}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;border:none;font-weight:700}
-  .btn.outline{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:700}
-  .btn.small{padding:8px 10px;font-size:.95rem}
-  .level-indicator{padding:8px 10px;border-radius:999px;font-weight:700}
-  .q-card{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
-  .question{font-weight:700;color:#e9dcd6;margin-bottom:10px}
-  .choices{display:flex;flex-direction:column;gap:8px}
-  .choice-btn{background:transparent;border:1px solid rgba(255,255,255,0.05);padding:12px;border-radius:10px;color:var(--muted);text-align:left;font-weight:700}
-  .choice-btn:hover{border-color:var(--accent);cursor:pointer}
-  .choice-btn[disabled]{opacity:.6;cursor:not-allowed}
-  .toast{margin-top:12px;padding:12px;border-radius:10px;display:none}
-  .toast.ok{background:rgba(80,150,90,0.12);color:#bfe6b7;border:1px solid rgba(80,150,90,0.18)}
-  .toast.err{background:linear-gradient(90deg, rgba(180,60,60,0.06), rgba(140,40,40,0.03));color:#ffb7b7;border:1px dashed rgba(200,60,60,0.25);font-family:monospace}
-  .encoded{font-family:monospace;background:rgba(0,0,0,0.16);padding:8px;border-radius:8px;margin-top:10px;color:#e6dcd6;overflow-x:auto}
-  .progress{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-  .chip{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:.85rem}
-  .input-inline{display:flex;gap:8px;margin-top:10px}
-  input.decode-input{flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;backdrop-filter:blur(2px)}
-  .modal .box{background:linear-gradient(180deg,var(--panel),#1b0f0d);padding:18px;border-radius:14px;color:var(--muted);max-width:420px;text-align:center}
-  .glitch{display:inline-block;position:relative}
-  .glitch::after,.glitch::before{content:attr(data-text);position:absolute;left:0;top:0;mix-blend-mode:screen;opacity:.6}
-  .glitch::before{color:#ff5f5f;transform:translate(-2px,-1px)}
-  .glitch::after{color:#7fb1ff;transform:translate(2px,1px)}
-  .level-basic{background:linear-gradient(90deg,#7f1b2b,#a3383f)}
-  .level-medium{background:linear-gradient(90deg,#6b0b0b,#7f0b0b)}
-  .level-hard{background:linear-gradient(90deg,#0b0b0b,#6b0b0b)}
-  .level-adv{background:linear-gradient(90deg,#2b160f,#0b0604)}
-  @media(min-width:640px){ .row.center{justify-content:flex-start} }
-  small.note{display:block;color:#bdaaa3;margin-top:6px}
+    body {
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        text-align: center;
+    }
+    .card {
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: auto;
+    }
+    button {
+        background: #880000;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        margin: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 80%;
+        font-size: 16px;
+    }
+    button:hover {
+        background: #aa0000;
+    }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Repertórios — Níveis & Codificações</h1>
-      <a href="index.html" class="muted">← Voltar</a>
-    </header>
 
-    <section class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-        <div>
-          <div class="muted">Modo: progressão por níveis (acerte 10 para avançar)</div>
-          <small class="note">Cada nível tem progresso próprio para as codificações da frase <em>tinky winky os aguarda novamente</em>.</small>
-        </div>
-        <div style="text-align:right">
-          <div class="muted">Acertos (sessão)</div>
-          <div id="score" class="chip">0</div>
-          <div style="height:6px"></div>
-          <div class="muted">Erros</div>
-          <div id="errors" class="chip">0</div>
-        </div>
-      </div>
-    </section>
+<h1>Parte 2 – Questões Avançadas</h1>
 
-    <section id="gameArea" class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div id="levelName" class="level-indicator level-basic">BÁSICO</div>
-          <div id="levelHint" class="muted" style="margin-top:6px">Responda 10 questões corretas para avançar ao próximo nível.</div>
-        </div>
-        <div style="text-align:right">
-          <div class="muted" style="font-size:.9rem">Codificações (parciais por nível)</div>
-          <div id="encodedArea" style="margin-top:6px">
-            <div class="encoded" id="encCaesar">Caesar: —</div>
-            <div class="encoded" id="encBase64" style="margin-top:6px">Base64: —</div>
-            <div class="encoded" id="encHex" style="margin-top:6px">Hex: —</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="q-card" style="margin-top:12px">
-        <div class="question" id="qText">Carregando questão...</div>
-        <div class="choices" id="choices"></div>
-        <div id="toast" class="toast"></div>
-
-        <div class="progress" id="progress"></div>
-
-        <div class="input-inline" style="margin-top:12px">
-          <input id="decodeInput" class="decode-input" placeholder="Tentar decodificar a frase final (ao concluir níveis)" />
-          <button id="decodeBtn" class="btn small">Decodificar</button>
-        </div>
-
-        <div style="margin-top:10px;text-align:right">
-          <button id="nextBtn" class="btn small" style="display:none">Próxima</button>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Modal final -->
-  <div id="finalModal" class="modal" style="display:none">
-    <div class="box">
-      <h2 class="glitch" data-text="Parabéns!">Parabéns!</h2>
-      <p style="margin-top:8px">Você completou todos os níveis.</p>
-      <p style="margin-top:6px">Decodifique a frase final abaixo:</p>
-      <pre id="finalEncoded" style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px;color:#e6dcd6;font-family:monospace;"></pre>
-      <div style="margin-top:12px">
-        <input id="finalAttempt" placeholder="Digite a frase decodificada aqui" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">
-        <div style="margin-top:12px;text-align:center">
-          <button id="submitFinal" class="btn">Enviar</button>
-          <button id="closeModal" class="btn outline" style="margin-left:8px">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="card">
+    <p id="pergunta">Carregando...</p>
+    <div id="opcoes"></div>
+</div>
 
 <script>
-/* ================== CONFIG ================== */
-const PHRASE_REP = "tinky winky os aguarda novamente";
-const FINAL_PHRASE = "Aguardo vocês aqui";
+// --------------------- QUESTÕES PARTE 2 ---------------------- //
+const perguntas2 = [
+    { p: "Qual método percorre arrays aplicando uma função em cada item?", 
+      op: ["map()", "each()", "forItem()", "loopMap()"], c: 0 },
 
-/* encoders */
-function caesarEncode(s, shift = 3){
-  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  return s.split('').map(ch=>{
-    const idx = A.indexOf(ch);
-    if(idx === -1) return ch;
-    const base = idx < 26 ? 0 : 26;
-    return A[(idx-base+shift)%26 + base];
-  }).join('');
-}
-function toBase64(s){ try{return btoa(unescape(encodeURIComponent(s)));}catch(e){return btoa(s);} }
-function toHex(s){ return Array.from(s).map(c=>c.charCodeAt(0).toString(16).padStart(2,'0')).join(' '); }
+    { p: "Qual método retorna um novo array apenas com itens filtrados?",
+      op: ["sort()", "clean()", "filter()", "select()"], c: 2 },
 
-/* encodeds */
-const encodedPerLevel = {
-  basic: {
-    caesar: caesarEncode(PHRASE_REP,3),
-    base64: toBase64(PHRASE_REP),
-    hex: toHex(PHRASE_REP)
-  },
-  medium: {
-    caesar: caesarEncode(PHRASE_REP,3),
-    base64: toBase64(PHRASE_REP),
-    hex: toHex(PHRASE_REP)
-  },
-  hard: {
-    caesar: caesarEncode(PHRASE_REP,3),
-    base64: toBase64(PHRASE_REP),
-    hex: toHex(PHRASE_REP)
-  },
-  adv: {
-    caesar: caesarEncode(PHRASE_REP,3),
-    base64: toBase64(PHRASE_REP),
-    hex: toHex(PHRASE_REP)
-  }
-};
+    { p: "Qual método reduz um array a um único valor?",
+      op: ["sum()", "reduce()", "compact()", "merge()"], c: 1 },
 
-/* split/chunk strategy per encoding (same for all levels) */
-function makeChunks(){
-  return [
-    { split: encodedPerLevel.basic.caesar.split(' '), joiner: ' ' }, // words
-    { split: (function(s){ const n=6, out=[]; for(let i=0;i<s.length;i+=n) out.push(s.slice(i,i+n)); return out;})(encodedPerLevel.basic.base64), joiner: '' },
-    { split: encodedPerLevel.basic.hex.split(' '), joiner: ' ' }
-  ];
-}
-const CHUNKS = makeChunks();
+    { p: "Qual evento é disparado quando o DOM termina de carregar?",
+      op: ["DOMContentLoaded", "onFinish", "loadedDOM", "DOMReady"], c: 0 },
 
-/* ================== QUESTÕES (por nível) ================== */
-/* Básico: 20 questões simples (adicionadas agora) */
-const basicQs = [
-  {n:1, q:'O que "console.log" faz em JavaScript?', opts:['Imprime no console','Cria variável','Faz requisição','Define função'], correct:0},
-  {n:2, q:'Como declarar uma variável que pode mudar de valor?', opts:['const x','let x','var x (impossível)','immutable x'], correct:1},
-  {n:3, q:'Qual símbolo é usado para terminar uma instrução?', opts:[',',';','!','/'], correct:1},
-  {n:4, q:'Como criar um array vazio?', opts:['{}','[]','()','<[]>'], correct:1},
-  {n:5, q:'Qual tipo é retornado por typeof 123?', opts:['"string"','"number"','"boolean"','"object"'], correct:1},
-  {n:6, q:'Como definir função com arrow?', opts:['function => {}','() => {}','func(){}','def => {}'], correct:1},
-  {n:7, q:'Qual valor Booleano representa falso?', opts:['true','1','false','"false"'], correct:2},
-  {n:8, q:'Qual operador é usado para soma?', opts:['-','*','/','+'], correct:3},
-  {n:9, q:'Como comentar uma linha?', opts:['/* comment */','// comment','<!-- -->','## comment'], correct:1},
-  {n:10,q:'Como obter o comprimento de uma string s?', opts:['s.len','s.length','len(s)','s.size'], correct:1},
-  {n:11,q:'Qual método adiciona elemento ao fim do array?', opts:['push','pop','shift','unshift'], correct:0},
-  {n:12,q:'Qual palavra cria uma função?', opts:['function','func','def','fn'], correct:0},
-  {n:13,q:'Como converter string "5" para número?', opts:['Number("5")','"5".toInt()','parseCSS("5")','toNumber("5")'], correct:0},
-  {n:14,q:'Qual comparação é estrita (sem coerção)?', opts:['==','!=','===','<>'], correct:2},
-  {n:15,q:'Como criar um objeto vazio?', opts:['[]','{}','()','<>'], correct:1},
-  {n:16,q:'Qual evento ouve clique em botão?', opts:['onchange','onclick','onsubmit','onhover'], correct:1},
-  {n:17,q:'Como escrever string com template literal?', opts:['"hello ${name}"',"'hello ${name}'",'`hello ${name}`','${"hello"}'], correct:2},
-  {n:18,q:'Qual método transforma JSON em objeto?', opts:['JSON.stringify()','JSON.parse()','JSON.toObj()','parse.JSON()'], correct:1},
-  {n:19,q:'Qual comando cria repetição fixa?', opts:['if','for','switch','try'], correct:1},
-  {n:20,q:'Como verificar igualdade com tipo?', opts:['==','===','equals','is'], correct:1}
+    { p: "Qual estrutura interrompe um loop?",
+      op: ["stop()", "break", "exit", "returnLoop"], c: 1 },
+
+    { p: "Qual operador espalha elementos de arrays/objetos?",
+      op: ["spread()", "...", "=>", "::"], c: 1 },
+
+    { p: "Qual função converte um objeto em JSON?",
+      op: ["JSON.convert()", "JSON.write()", "JSON.stringify()", "object.toJSON()"], c: 2 },
+
+    { p: "Qual método cria uma cópia superficial de parte de um array?",
+      op: ["slice()", "cut()", "part()", "copy()"], c: 0 },
+
+    { p: "Qual método altera o próprio array removendo ou adicionando itens?",
+      op: ["splice()", "cut()", "edit()", "slice()"], c: 0 },
+
+    { p: "Qual palavra-chave define uma classe?",
+      op: ["class", "object", "struct", "define"], c: 0 },
+
+    { p: "Como se chama a função especial dentro da classe que inicializa valores?",
+      op: ["initializer", "start()", "constructor", "init()"], c: 2 },
+
+    { p: "Qual método de array verifica se ao menos um item atende a condição?",
+      op: ["every()", "some()", "atLeast()", "checkAny()"], c: 1 },
+
+    { p: "Qual método executa código após x milissegundos?",
+      op: ["delay()", "setTimeout()", "setTimer()", "runLater()"], c: 1 },
+
+    { p: "Qual propriedade retorna o número de argumentos de uma função?",
+      op: ["func.size", "func.arguments", "func.length", "func.params"], c: 2 },
+
+    { p: "Qual método retorna o índice do primeiro item que atender a condição?",
+      op: ["find()", "indexOf()", "findIndex()", "locate()"], c: 2 },
+
+    { p: "Qual método retorna true se todos os itens atenderem a condição?",
+      op: ["trueAll()", "every()", "checkAll()", "validate()"], c: 1 },
+
+    { p: "Qual comando lança um erro manualmente?",
+      op: ["throw", "error()", "launch()", "fail()"], c: 0 },
+
+    { p: "Qual palavra-chave permite herança entre classes?",
+      op: ["extends", "inherits", "superclass", "clone"], c: 0 },
+
+    { p: "Qual palavra acessa a classe-mãe dentro de uma classe filha?",
+      op: ["parent", "root", "super", "base"], c: 2 },
+
+    { p: "Qual método retorna o primeiro item que satisfaça a condição?",
+      op: ["first()", "find()", "locateFirst()", "get()"], c: 1 }
 ];
 
-/* Médio (15) — uso das perguntas previamente fornecidas (nível médio) */
-const mediumQs = [
-  {n:1,q:'Qual será o resultado da expressão: (10 >= 8) && (5 < 3)?', opts:['true','false','undefined','erro de sintaxe'], correct:1},
-  {n:2,q:'Saída do código com nota=7 ... console.log("Fim");', opts:['Aprovado','Fim','Aprovado / Fim','Nenhuma saída'], correct:2},
-  {n:3,q:'Quantas vezes o console.log será executado? for i =0; i<=5', opts:['4 vezes','5 vezes','6 vezes','7 vezes'], correct:2},
-  {n:4,q:'Qual operador lógico retorna TRUE quando ao menos uma condição é verdadeira?', opts:['&&','||','!','=='], correct:1},
-  {n:5,q:'Analise let idade=17; ... qual a saída?', opts:['Maior','Quase','Menor','Maior / Quase'], correct:1},
-  {n:6,q:'Qual será o valor final de x no while?', opts:['4','5','6','0'], correct:1},
-  {n:7,q:'Valor de resultado: a - b * 2 (10,5)?', opts:['10','0','20','5'], correct:1},
-  {n:8,q:'Qual expressão retorna TRUE? (x=15,y=20)', opts:['(x>20)&&(y>15)','(x<10)||(y<15)','(x>=15)&&(y>=20)','(x==20)||(y==15)'], correct:2},
-  {n:9,q:'Saída for 2..8 step 2', opts:['2,4,6,8','2,4,6','0,2,4,6,8','2,4,6,8,10'], correct:0},
-  {n:10,q:'Se temperatura=20 qual saída do if', opts:['Calor','Frio','Calor / Frio','Nenhuma saída'], correct:1},
-  {n:11,q:'Quantas vezes "Olá" será impresso? while cont<=4', opts:['3','4','5','Infinitas'], correct:1},
-  {n:12,q:'Qual será o valor de y? let x=10; y = x/2 + 3*2;', opts:['11','16','13','26'], correct:0},
-  {n:13,q:'for aninhado i<3 j<2 => quantas execuções?', opts:['3','5','6','9'], correct:2},
-  {n:14,q:'Saída nota=7 faltas=6 (condicionais)', opts:['Aprovado','Reprovado por falta','Reprovado por nota','Nenhuma'], correct:1},
-  {n:15,q:'Último valor impresso de i: while i<10 i+=3', opts:['6','9','10','12'], correct:1}
-];
+let lista = [...perguntas2];
 
-/* Difícil (15) */
-const hardQs = [
-  {n:1,q:'Qual expressão retorna FALSE? (a=5,b=10,c=15)', opts:['(a<b)&&(b<c)','(a>b)||(c>b)','!(a==5)&&(b==10)','(a<c)||(b>c)'], correct:2},
-  {n:2,q:'Saída for decremento i=10;i>5;i-=2', opts:['10,8,6','10,8,6,4','10,9,8,7,6','10,8'], correct:0},
-  {n:3,q:'Condicional encadeada x=15 -> saída?', opts:['A','B','C','D'], correct:1},
-  {n:4,q:'Valor final soma de 1 a 5', opts:['10','15','20','5'], correct:1},
-  {n:5,q:'while x=1; while(x<20){ x=x*2 } iteracões?', opts:['3','4','5','6'], correct:2},
-  {n:6,q:'resultado = 10 + 5*2 - 8/4', opts:['28','18','22','17'], correct:1},
-  {n:7,q:'Quantos pares serão impressos de 1 a 10?', opts:['4','5','6','10'], correct:1},
-  {n:8,q:'if(!ativo) com ativo=false -> saída?', opts:['Ativo','Inativo','true','false'], correct:1},
-  {n:9,q:'Valor cont com i=5 decrescendo', opts:['0','4','5','6'], correct:2},
-  {n:10,q:'valor do algoritmo com i<=4 j<=3 soma i*j', opts:['50','60','70','80'], correct:1},
-  {n:11,q:'Quantas vezes "X" será impresso (i+j>6)?', opts:['6','8','10','12'], correct:2},
-  {n:12,q:'!(a>5 && b<10) equivale a?', opts:['(a<=5)&&(b>=10)','(a<=5)||(b>=10)','(a<5)&&(b>10)','(a>5)||(b<10)'], correct:1},
-  {n:13,q:'Saída bloco a=10,b=20,c=15', opts:['A','B','C','Nenhuma saída'], correct:1},
-  {n:14,q:'Resultado final for i=0,j=10 i<5', opts:['45','50','55','60'], correct:1},
-  {n:15,q:'while x<=100 multiplicando por 3 -> iterações?', opts:['3','4','5','6'], correct:2}
-];
-
-/* Avançado (15) */
-const advQs = [
-  {n:1,q:'FizzBuzz num=15 -> saída?', opts:['Fizz','Buzz','FizzBuzz','15'], correct:2},
-  {n:2,q:'pares/ímpares em 1..10 -> pares/ímpares?', opts:['4/6','5/5','6/4','5/6'], correct:1},
-  {n:3,q:'Salario 3000 -> saída?', opts:['3000','3150','3300','3450'], correct:2},
-  {n:4,q:'6º número Fibonacci (segundo código)', opts:['5','8','13','21'], correct:0},
-  {n:5,q:'Valor final total (while aninhado)', opts:['12','15','18','21'], correct:2},
-  {n:6,q:'resultado multiplicando impares 1..5', opts:['15','105','120','1'], correct:0},
-  {n:7,q:'Laços aninhados com condições mais complexas', opts:['6','8','10','12'], correct:2},
-  {n:8,q:'Operadores lógicos avançados equivalência', opts:['A','B','C','D'], correct:1},
-  {n:9,q:'Laço for com múltiplas variáveis soma i+j', opts:['45','50','55','60'], correct:1},
-  {n:10,q:'while com lógica complexa multiplicando por 3', opts:['3','4','5','6'], correct:2},
-  {n:11,q:'Análise fluxo com break simulado FizzBuzz', opts:['Fizz','Buzz','FizzBuzz','15'], correct:2},
-  {n:12,q:'Laços com acumuladores múltiplos 1..10', opts:['4/6','5/5','6/4','5/6'], correct:1},
-  {n:13,q:'Estrutura condicional complexa com cálculos', opts:['3000','3150','3300','3450'], correct:2},
-  {n:14,q:'Laço for padrão Fibonacci qual o número?', opts:['5','8','13','21'], correct:0},
-  {n:15,q:'WHILE aninhado com contadores total final', opts:['12','15','18','21'], correct:2}
-];
-
-/* ========= ESTADO ========= */
-let levelOrder = ['basic','medium','hard','adv'];
-let levelIndex = 0; // starts at basic
-let levelNameMap = {basic:'BÁSICO', medium:'MÉDIO', hard:'DIFÍCIL', adv:'AVANÇADO'};
-let levelColorClass = {'basic':'level-basic','medium':'level-medium','hard':'level-hard','adv':'level-adv'};
-let levelPools = { basic: shuffleArray(basicQs.slice()), medium: shuffleArray(mediumQs.slice()), hard: shuffleArray(hardQs.slice()), adv: shuffleArray(advQs.slice()) };
-let perLevelCorrect = { basic:0, medium:0, hard:0, adv:0 };
-let revealedPerLevel = {
-  basic: { caesar:0, base64:0, hex:0 },
-  medium: { caesar:0, base64:0, hex:0 },
-  hard: { caesar:0, base64:0, hex:0 },
-  adv: { caesar:0, base64:0, hex:0 }
-};
-let score = 0, errors = 0;
-let currentQuestion = null;
-let questionAnswered = false;
-
-/* UI refs */
-const levelNameEl = document.getElementById('levelName');
-const levelHintEl = document.getElementById('levelHint');
-const encCaesarEl = document.getElementById('encCaesar');
-const encBase64El = document.getElementById('encBase64');
-const encHexEl = document.getElementById('encHex');
-const qText = document.getElementById('qText');
-const choicesEl = document.getElementById('choices');
-const toast = document.getElementById('toast');
-const progressEl = document.getElementById('progress');
-const scoreEl = document.getElementById('score');
-const errorsEl = document.getElementById('errors');
-const decodeInput = document.getElementById('decodeInput');
-const decodeBtn = document.getElementById('decodeBtn');
-const nextBtn = document.getElementById('nextBtn');
-const finalModal = document.getElementById('finalModal');
-const finalEncoded = document.getElementById('finalEncoded');
-const finalAttempt = document.getElementById('finalAttempt');
-const submitFinal = document.getElementById('submitFinal');
-const closeModal = document.getElementById('closeModal');
-
-/* ====== INICIALIZAÇÃO ====== */
-updateLevelUI();
-renderProgress();
-scoreEl.textContent = score;
-errorsEl.textContent = errors;
-nextQuestion();
-
-/* ================== FUNÇÕES ================== */
-
-function shuffleArray(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function pickQuestionForLevel(lvl){
-  let pool = levelPools[lvl];
-  if(!pool || pool.length===0){
-    // refill pool (reshuffle original)
-    if(lvl==='basic') pool = levelPools[lvl] = shuffleArray(basicQs.slice());
-    if(lvl==='medium') pool = levelPools[lvl] = shuffleArray(mediumQs.slice());
-    if(lvl==='hard') pool = levelPools[lvl] = shuffleArray(hardQs.slice());
-    if(lvl==='adv') pool = levelPools[lvl] = shuffleArray(advQs.slice());
-  }
-  return pool.pop();
-}
-
-function nextQuestion(){
-  questionAnswered = false;
-  const lvl = levelOrder[levelIndex];
-  currentQuestion = pickQuestionForLevel(lvl);
-  renderQuestion(currentQuestion);
-}
-
-function renderQuestion(q){
-  qText.textContent = `(${q.n}) ${q.q}`;
-  choicesEl.innerHTML = '';
-  q.opts.forEach((opt,i)=>{
-    const b = document.createElement('button');
-    b.className='choice-btn';
-    b.textContent = String.fromCharCode(65+i) + '. ' + opt;
-    b.onclick = ()=> onSelect(i,b);
-    choicesEl.appendChild(b);
-  });
-  toast.style.display = 'none';
-  nextBtn.style.display = 'none';
-}
-
-function onSelect(i, btn){
-  if(questionAnswered) return;
-  questionAnswered = true;
-  Array.from(choicesEl.children).forEach(x=>x.disabled=true);
-  const corr = currentQuestion.correct;
-  if(i === corr){
-    // correct
-    score++; perLevelCorrect[levelOrder[levelIndex]]++;
-    scoreEl.textContent = score;
-    btn.style.borderColor = 'rgba(80,180,100,0.95)';
-    showToast(true,'Correto — trecho(s) revelado(s).');
-    revealChunksForCurrentLevel();
-    checkLevelAdvance();
-  } else {
-    errors++; errorsEl.textContent = errors;
-    btn.style.borderColor = 'rgba(200,80,80,0.95)';
-    showToast(false, glitchText('ERRO: segmento corrompido — 0x1A'));
-  }
-  nextBtn.style.display = 'inline-block';
-}
-
-nextBtn.addEventListener('click', ()=> nextQuestion());
-
-/* reveal chunks for current level: increments each of the three encodings by one unit */
-function revealChunksForCurrentLevel(){
-  const lvl = levelOrder[levelIndex];
-  // reveal strategy: caesar by word, base64 per 6 chars, hex per byte
-  const config = CHUNKS; // [caesar, base64, hex]
-  // increase revealed counts for that level
-  revealedPerLevel[lvl].caesar = Math.min(config[0].split.length, (revealedPerLevel[lvl].caesar||0)+1);
-  revealedPerLevel[lvl].base64 = Math.min(config[1].split.length, (revealedPerLevel[lvl].base64||0)+1);
-  revealedPerLevel[lvl].hex = Math.min(config[2].split.length, (revealedPerLevel[lvl].hex||0)+1);
-  updateEncodedUI();
-  renderProgress();
-}
-
-function updateEncodedUI(){
-  const lvl = levelOrder[levelIndex];
-  const cfg = CHUNKS;
-  const r = revealedPerLevel[lvl];
-  encCaesarEl.textContent = 'Caesar: ' + (r.caesar ? cfg[0].split.slice(0,r.caesar).join(cfg[0].joiner) + (r.caesar < cfg[0].split.length? ' …' : '') : '—');
-  encBase64El.textContent = 'Base64: ' + (r.base64 ? cfg[1].split.slice(0,r.base64).join(cfg[1].joiner) + (r.base64 < cfg[1].split.length? ' …' : '') : '—');
-  encHexEl.textContent = 'Hex: ' + (r.hex ? cfg[2].split.slice(0,r.hex).join(cfg[2].joiner) + (r.hex < cfg[2].split.length? ' …' : '') : '—');
-}
-
-/* progress rendering (per-level status summary) */
-function renderProgress(){
-  progressEl.innerHTML = '';
-  levelOrder.forEach(l=>{
-    const totalC = CHUNKS[0].split.length + CHUNKS[1].split.length + CHUNKS[2].split.length;
-    const revealedSum = (revealedPerLevel[l].caesar||0) + (revealedPerLevel[l].base64||0) + (revealedPerLevel[l].hex||0);
-    const chip = document.createElement('div'); chip.className='chip';
-    chip.textContent = `${l.toUpperCase()}: ${perLevelCorrect[l]||0}/10 • cod ${revealedSum}/${totalC}`;
-    progressEl.appendChild(chip);
-  });
-}
-
-/* check advance once player reaches 10 corrects on current level */
-function checkLevelAdvance(){
-  const lvl = levelOrder[levelIndex];
-  if(perLevelCorrect[lvl] >= 10){
-    // advance if possible
-    if(levelIndex < levelOrder.length - 1){
-      levelIndex++;
-      // update UI color/name
-      updateLevelUI();
-      showToast(true, `Você avançou para ${levelNameMap[levelOrder[levelIndex]]}!`);
-      // small delay then next question
-      setTimeout(()=> nextQuestion(),700);
-    } else {
-      // finished all levels -> show final modal
-      showFinal();
+// --------------------- FUNÇÃO MOSTRAR PERGUNTA ---------------------- //
+function mostrarPergunta() {
+    if (lista.length === 0) {
+        document.getElementById("pergunta").textContent = "Fim da Parte 2.";
+        document.getElementById("opcoes").innerHTML = "";
+        return;
     }
-  } else {
-    // continue in same level
-    setTimeout(()=> nextQuestion(),600);
-  }
+
+    let i = Math.floor(Math.random() * lista.length);
+    let atual = lista[i];
+
+    document.getElementById("pergunta").textContent = atual.p;
+
+    let html = "";
+    atual.op.forEach((opcao, idx) => {
+        html += `<button onclick='responder(${i}, ${idx})'>${opcao}</button>`;
+    });
+
+    document.getElementById("opcoes").innerHTML = html;
 }
 
-/* update level UI (name and color) */
-function updateLevelUI(){
-  const lvl = levelOrder[levelIndex];
-  levelNameEl.textContent = levelNameMap[lvl];
-  levelNameEl.className = `level-indicator ${levelColorClass[lvl]}`;
-  levelHintEl.textContent = `Nível: ${levelNameMap[lvl]} — acerte ${10 - (perLevelCorrect[lvl]||0)} questões para avançar.`;
-  updateEncodedUI();
+// ------------------------ RESPOSTA --------------------------- //
+function responder(iPergunta, resposta) {
+    lista.splice(iPergunta, 1);
+    mostrarPergunta();
 }
 
-/* toast helper */
-function showToast(ok, text){
-  toast.style.display = 'block';
-  toast.className = ok ? 'toast ok' : 'toast err';
-  toast.textContent = text;
-  if(!ok) glitchAnimate(toast);
-}
-
-/* glitch helpers */
-function glitchText(s){ return s.split('').map(ch=> Math.random()<0.18 ? String.fromCharCode(33+Math.floor(Math.random()*30)) : ch).join(''); }
-function glitchAnimate(el){ const orig=el.textContent; let steps=0; const iv=setInterval(()=>{ el.textContent = glitchText(orig); steps++; if(steps>5){ clearInterval(iv); el.textContent=orig; } },110); }
-
-/* decode input: for current level player can attempt to decode the REP phrase (tinky winky...) OR can try final decode later */
-decodeBtn.addEventListener('click', ()=> attemptDecodeCurrentLevel());
-decodeInput.addEventListener('keydown', (e)=> { if(e.key==='Enter') attemptDecodeCurrentLevel(); });
-
-function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
-
-function attemptDecodeCurrentLevel(){
-  const val = decodeInput.value || '';
-  if(!val.trim()){ showToast(false,'Digite algo para verificar.'); return; }
-  const norm = normalize(val);
-  const target = normalize(PHRASE_REP);
-  if(norm === target){
-    // if player writes the plain phrase, mark current level as fully revealed
-    const lvl = levelOrder[levelIndex];
-    revealedPerLevel[lvl].caesar = CHUNKS[0].split.length;
-    revealedPerLevel[lvl].base64 = CHUNKS[1].split.length;
-    revealedPerLevel[lvl].hex = CHUNKS[2].split.length;
-    updateEncodedUI(); renderProgress();
-    showToast(true,'Decodificação correta — nível completado!');
-    // give 1 extra score if not achieved yet 10
-    perLevelCorrect[lvl] = Math.min(10, (perLevelCorrect[lvl]||0) + 1);
-    score++; scoreEl.textContent = score;
-    // check if can advance
-    checkLevelAdvance();
-  } else {
-    errors++; errorsEl.textContent = errors;
-    showToast(false, glitchText('DECODE ERROR: inválido'));
-  }
-  decodeInput.value = '';
-}
-
-/* ========== FINAL (quando todos níveis tiverem 10 acertos) ========== */
-function allLevelsCompleted(){
-  return levelOrder.every(l => (perLevelCorrect[l] || 0) >= 10);
-}
-
-function showFinal(){
-  // create encoded final text (we'll use shift+base64 like antes)
-  function encodeFinal(s){
-    // shift letters by 5 then base64
-    const A='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const shifted = s.split('').map(ch=>{
-      const idx=A.indexOf(ch);
-      if(idx===-1) return ch;
-      const base=idx<26?0:26;
-      return A[(idx-base+5)%26 + base];
-    }).join('');
-    try { return btoa(unescape(encodeURIComponent(shifted))); } catch(e){ return btoa(shifted); }
-  }
-  finalEncoded.textContent = encodeFinal(FINAL_PHRASE);
-  finalModal.style.display = 'flex';
-}
-
-/* final submission */
-submitFinal.addEventListener('click', ()=>{
-  const attempt = finalAttempt.value || '';
-  if(!attempt.trim()){ alert('Digite a frase decodificada.'); return; }
-  if(normalize(attempt) === normalize(FINAL_PHRASE)){
-    alert('Parabéns — você decodificou a frase final!');
-    // save to ranking-local
-    const name = prompt('Nome do grupo para ranking:') || 'Anônimo';
-    const list = JSON.parse(localStorage.getItem('jsg_ranking')||'[]');
-    list.push({ name, score, date: new Date().toISOString() });
-    localStorage.setItem('jsg_ranking', JSON.stringify(list));
-    finalModal.style.display='none';
-    // redirect to ranking if present
-    window.location.href = 'ranking.html';
-  } else {
-    showToast(false, glitchText('Resposta final incorreta.'));
-  }
-});
-closeModal.addEventListener('click', ()=> finalModal.style.display='none');
-
-/* small UI start */
-function startRoutine(){
-  updateLevelUI();
-  renderProgress();
-  scoreEl.textContent = score; errorsEl.textContent = errors;
-}
-startRoutine();
-
+mostrarPergunta();
 </script>
+
 </body>
 </html>
+
