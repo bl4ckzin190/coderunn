@@ -1,0 +1,25 @@
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Desafio Final</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Desafio Final</h1>
+    <p class="subtitle">Você terá <strong>20 minutos</strong> para decodificar a frase.</p>
+    <div class="card">
+      <div id="timer">20:00</div>
+      <p>Frase a ser decodificada (codificada abaixo):</p>
+      <pre id="encoded" class="card small"></pre>
+      <div class="decode">
+        <input id="final-attempt" placeholder="Insira a frase decodificada">
+        <button id="final-check">Enviar</button>
+      </div>
+      <div id="final-msg"></div>
+    </div>
+  </main>
+  <script src="challenge.js"></script>
+</body>
+</html>
