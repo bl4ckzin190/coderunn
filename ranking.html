@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ranking — JS Game</title>
+  <style>
+    body{background:#050303;color:#ddd;font-family:Inter,system-ui;padding:18px}
+    .card{background:#0f0b0d;padding:12px;border-radius:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;text-align:left}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Ranking</h1>
+    <table id="tbl">
+      <thead><tr><th>#</th><th>Nome</th><th>Tempo (s)</th><th>Data</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <a href="part1/index.html">Voltar ao jogo</a>
+  </main>
+  <script>
+    const tbody = document.querySelector('#tbl tbody');
+    const list = JSON.parse(localStorage.getItem('jsgame_ranking')||'[]');
+    list.forEach((it,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${it.name}</td><td>${it.time}</td><td>${new Date(it.date).toLocaleString()}</td>`;
+      tbody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
