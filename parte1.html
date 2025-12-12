@@ -2,99 +2,24 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Parte 1 - JavaScript Básico</title>
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .question {
-            background: #2a2a2a;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-        }
-        button {
-            margin-top: 10px;
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            background: #8b0000;
-            color: white;
-            border-radius: 5px;
-        }
-        button:hover {
-            background: #b30000;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte 1 - CodeRunn</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <h1>Parte 1 – Questões Básicas de JavaScript</h1>
-    <p>Responda todas para avançar.</p>
+    <div class="container">
+        <h1>Parte 1</h1>
 
-    <div id="quiz"></div>
+        <div id="question-box">
+            <p id="question-text">Carregando pergunta...</p>
 
-    <button onclick="finalizar()">Finalizar Parte 1</button>
-
-<script>
-const questoes = [
-    { q: "1) Qual palavra-chave cria uma variável que pode ser alterada?", a: "let" },
-    { q: "2) Qual palavra-chave cria uma constante?", a: "const" },
-    { q: "3) Qual palavra-chave cria uma variável no modo antigo?", a: "var" },
-    { q: "4) O que o comando console.log faz?", a: "exibe mensagem no console" },
-    { q: "5) Qual símbolo é usado para comentários de uma linha?", a: "//" },
-    { q: "6) Qual operador soma valores?", a: "+" },
-    { q: "7) Qual operador compara valores sem considerar tipo?", a: "==" },
-    { q: "8) Qual operador compara valores considerando tipo?", a: "===" },
-    { q: "9) Qual laço repete enquanto a condição for verdadeira?", a: "while" },
-    { q: "10) Qual laço percorre um número definido de vezes?", a: "for" },
-    { q: "11) Como chamamos um bloco de código reutilizável?", a: "função" },
-    { q: "12) Qual comando interrompe um loop?", a: "break" },
-    { q: "13) Qual comando pula para a próxima repetição?", a: "continue" },
-    { q: "14) Como se chama uma lista de valores em JS?", a: "array" },
-    { q: "15) Como acessar o primeiro item de um array chamado lista?", a: "lista[0]" },
-    { q: "16) Qual tipo representa textos?", a: "string" },
-    { q: "17) Qual tipo representa números?", a: "number" },
-    { q: "18) Qual estrutura armazena chave e valor?", a: "objeto" },
-    { q: "19) Qual função mostra uma caixa de alerta?", a: "alert" },
-    { q: "20) Qual função recebe texto do usuário?", a: "prompt" },
-    { q: "21) Qual valor representa ausência intencional?", a: "null" },
-    { q: "22) Qual valor representa algo indefinido?", a: "undefined" },
-    { q: "23) Qual operador lógico representa E?", a: "&&" }
-];
-
-// Gerar perguntas na tela
-const quizDiv = document.getElementById("quiz");
-questoes.forEach((item, i) => {
-    quizDiv.innerHTML += `
-        <div class="question">
-            <p>${item.q}</p>
-            <input type="text" id="q${i}" placeholder="Resposta...">
+            <div id="answers"></div>
         </div>
-    `;
-});
+    </div>
 
-function finalizar() {
-    let acertos = 0;
-    for (let i = 0; i < questoes.length; i++) {
-        const resp = document.getElementById("q" + i).value.trim().toLowerCase();
-        if (resp === questoes[i].a.toLowerCase()) acertos++;
-    }
-
-    alert("Você acertou " + acertos + " de " + questoes.length);
-
-    if (acertos >= 15) {
-        alert("Você desbloqueou a próxima parte!");
-        window.location.href = "parte2.html";
-    } else {
-        alert("Tente novamente. Mínimo: 15 acertos.");
-    }
-}
-</script>
+    <script src="parte1.js"></script>
 
 </body>
 </html>
-
