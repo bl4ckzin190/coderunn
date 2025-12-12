@@ -1,36 +1,29 @@
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Code Run — Parte 1</title>
+  <title>JS Ouija — Início</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <h1>Tabuleiro — Parte 1</h1>
-    <p class="subtitle">Responda situações para avançar pelo tabuleiro</p>
+  <main class="wrap">
+    <header class="top">
+      <h1 class="brand">JS Ouija</h1>
+      <p class="tag">Jogo — parte 1 (tabuleiro) & seção de repertórios</p>
+    </header>
 
-    <section id="board-wrap">
-      <div id="board" aria-hidden="true"></div>
-      <div id="player" class="player">●</div>
-    </section>
-
-    <section id="question-area">
-      <div id="qbox" class="card">
-        <p id="question-text"></p>
-        <div id="choices"></div>
-        <div class="controls">
-          <button id="next-btn" class="hidden">Próxima</button>
-        </div>
+    <section class="card center">
+      <h2>Iniciar</h2>
+      <p class="muted">Escolha onde começar</p>
+      <div class="actions">
+        <a class="btn" href="parte1.html">Parte 1 — Tabuleiro</a>
+        <a class="btn outline" href="repertorios.html">Parte 2 — Repertórios</a>
+        <a class="btn small" href="ranking.html">Ver Ranking</a>
       </div>
     </section>
 
-    <nav class="footer">
-      <a href="../part2/index.html">Ir para Parte 2</a>
-      <a href="../final_challenge/index.html">Desafio Final</a>
-    </nav>
+    <footer class="foot muted">Design: marrom · preto · bordo — mobile first · clean</footer>
   </main>
-
-  <script src="game.js"></script>
 </body>
 </html>
