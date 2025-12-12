@@ -1,0 +1,21 @@
+:root{
+  --bg:#050203;
+  --panel:#0f0b0d;
+  --accent:#a30c0c;
+  --purple:#2b1940;
+  --muted:#cfc5c1;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#09050a);color:var(--muted);font-family:Inter,system-ui,sans-serif}
+.container{max-width:520px;margin:0 auto;padding:18px}
+h1{color:var(--accent);font-size:1.2rem}
+.repos{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.repo-btn{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px}
+.hidden{display:none}
+.small{margin-top:10px}
+.decode{display:flex;gap:8px;margin-top:10px}
+.decode input{flex:1;padding:10px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+.decode button{padding:8px;border-radius:6px;border:1px solid var(--accent);color:var(--accent)}
+#msg{margin-top:8px}
+@media(max-width:420px){.container{padding:12px}}
