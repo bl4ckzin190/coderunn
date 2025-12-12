@@ -2,101 +2,22 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Início</title>
-    <style>
-        body {
-            background: #0d0d0d;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 40px;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            color: #b30000;
-        }
-
-        p {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            margin: 15px 0;
-            padding: 15px;
-            background: #800000;
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 10px;
-            transition: 0.25s;
-            border: 2px solid #660000;
-        }
-
-        .btn:hover {
-            background: #b30000;
-            transform: scale(1.05);
-        }
-
-        .section-title {
-            margin-top: 50px;
-            font-size: 24px;
-            color: #d9d9d9;
-            border-bottom: 2px solid #800000;
-            padding-bottom: 8px;
-        }
-
-        footer {
-            margin-top: 50px;
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        /* Responsivo */
-        @media screen and (max-width: 500px) {
-            h1 { font-size: 28px; }
-            .btn { font-size: 18px; padding: 12px; }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeRunn - Início</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="container">
-        <h1>Sistema de Desafios</h1>
-        <p>Bem-vindo(a). Escolha uma categoria e avance para os desafios.</p>
+        <h1>CodeRunn</h1>
 
-        <div class="section-title">Parte 1 – Básico</div>
-        <a href="parte1.html" class="btn">Iniciar Parte 1</a>
+        <button onclick="window.location.href='parte1.html'">Início</button>
 
-        <div class="section-title">Parte 2 – Médio</div>
-        <a href="parte2.html" class="btn">Acessar Parte 2</a>
+        <button onclick="window.location.href='parte2.html'">Fim..?</button>
 
-        <div class="section-title">Parte 3 – Difícil</div>
-        <a href="parte3.html" class="btn">Acessar Parte 3</a>
-
-        <div class="section-title">Parte 4 – Avançado</div>
-        <a href="parte4.html" class="btn">Acessar Parte 4</a>
-
-        <div class="section-title">Desafio Final</div>
-        <a href="desafio-simbolos.html" class="btn">Resolver Enigma Final</a>
-
-        <div class="section-title">Ranking</div>
-        <a href="ranking.html" class="btn">Ver Ranking</a>
+        <button onclick="window.location.href='ranking.html'">Campo da Vitória</button>
     </div>
-
-    <footer>
-        Desenvolvido para seu sistema de desafios.
-    </footer>
 
 </body>
 </html>
